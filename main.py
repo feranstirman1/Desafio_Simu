@@ -37,12 +37,12 @@ mainCanvas.pack()
 #creating the items that will go on the canvas
 bgImage = mainCanvas.create_image(500,300,image=bgImg)
 
-beginButton = mainCanvas.create_image(-30,370,image=bgnBtn)
-quitButton = mainCanvas.create_image(1030,450,image=qtBtn)
+beginButton = mainCanvas.create_image(0,370,image=bgnBtn)
+quitButton = mainCanvas.create_image(1000,450,image=qtBtn)
 
 
 #funciones para animar los items dentro del canvas
-xspeed = 7
+xspeed = 5
 def SlideRight(item,finalCoordinate):
     global mainCanvas
     pos = mainCanvas.coords(item)
@@ -54,7 +54,7 @@ def SlideRight(item,finalCoordinate):
 def SlideLeft(item,finalCoordinate):
     global mainCanvas
     pos = mainCanvas.coords(item)
-    while(pos[0] > finalCoordinate):
+    while(pos[0] > finalCoordinate+12):
         pos = mainCanvas.coords(item)
         mainCanvas.move(item,-xspeed,0)
         root.update()
