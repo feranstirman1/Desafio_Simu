@@ -13,6 +13,7 @@ root = Tk()
 root.title("Desafio MEF en 3D")
 root.minsize(width=1000,height=600)
 root.maxsize(width=1000,height=600)
+root.geometry('+300+100')
 root.resizable(False,False)
 
 #functions to help reuse code
@@ -23,6 +24,7 @@ def destroyCurrentAndOpenNewWindow(newWindowName):
     root.title(str(newWindowName))
     root.minsize(width=1000,height=600)
     root.maxsize(width=1000,height=600)
+    root.geometry('+300+100')
     root.resizable(False,False)
 
 #setting the bg image for the home page and the buttons
@@ -68,6 +70,7 @@ SlideLeft(quitButton,500)
 #adding bindings to the two buttons
 def beginApplication(event):
     print("The application has begun")
+    destroyCurrentAndOpenNewWindow("Application Start")
 
 def closeApplication(event):
     #print("The app has ended")
@@ -75,6 +78,8 @@ def closeApplication(event):
 
 mainCanvas.tag_bind(beginButton,"<Button-1>",beginApplication)
 mainCanvas.tag_bind(quitButton,"<Button-1>",closeApplication)
+
+
 
 
 #infinte loop the keep showing our main window
