@@ -36,6 +36,11 @@ class App(Tk):
 		self.condicion2Img = PhotoImage(file="resources/condiciones/condicion2.png")
 		self.condicionesButtonImg = PhotoImage(file="resources/condiciones/condicionesButton.png")
 
+		''' IMAGES FOR PAGE FIVE '''
+		self.tablaBgImg = PhotoImage(file="resources/tabla/tablaBG.png")
+		self.tablaImg = PhotoImage(file="resources/tabla/tabla.png")
+		self.tablaButtonImg = PhotoImage(file="resources/tabla/tablaButton.png")
+
 		##########################################################################################################################
 
 		#Setup Frame
@@ -235,7 +240,6 @@ class PageThree(Frame):
 			self.controller.update()
 			time.sleep(0.001)
 
-
 class PageFour(Frame):
 	def __init__(self, parent, controller):
 		Frame.__init__(self, parent)
@@ -295,6 +299,44 @@ class PageFour(Frame):
 class PageFive(Frame):
 	def __init__(self, parent, controller):
 		Frame.__init__(self, parent)
+
+		self.controller = controller
+
+		#creating the canvas
+		self.canvas = Canvas(self,width=1000,height=600)
+		self.canvas.pack()
+
+		''' placing the images onto the canvas '''
+		tablaBG = self.canvas.create_image(500,300,image = controller.tablaBgImg)
+		tablaButton = self.canvas.create_image(100,400,image = controller.tablaButtonImg)
+		self.tabla = self.canvas.create_image(500,900,image = controller.tablaImg)
+
+		casaIcon = self.canvas.create_image(159,75,image= controller.casaImg)
+		flechaIcon = self.canvas.create_image(900,550,image = controller.flechaImg)
+
+		''' Binding buttons '''
+		self.canvas.tag_bind(tablaButton,"<Button-1>",self.mostrarTabla)
+		self.canvas.tag_bind(casaIcon,"<Button-1>",self.changeToStartPage)
+		self.canvas.tag_bind(flechaIcon,"<Button-1>",self.changeToPageSix)
+
+	def changeToStartPage(self,event):
+		self.controller.show_frame(StartPage)
+
+	def changeToPageSix(self,event):
+		self.controller.show_frame(PageSix)
+
+	def mostrarTabla(self,event):
+		self.moverArriba(self.tabla,375)
+
+	def moverArriba(self,item,posicionFinal):
+		yspeed=-1
+		pos =  self.canvas.coords(item)
+		while(pos[1] > posicionFinal):
+			self.canvas.move(item,0,yspeed)
+			pos = self.canvas.coords(item)
+			self.controller.update()
+			time.sleep(0.001)
+
 
 class PageSix(Frame):
 	def __init__(self, parent, controller):
