@@ -5,7 +5,7 @@ class App(Tk):
 	def __init__(self, *args, **kwargs):
 		Tk.__init__(self, *args, **kwargs)
 
-		###################ALL THE IMAGES THAT THE APPLICATION WILL USE############################################################
+		################### ALL THE IMAGES THAT THE APPLICATION WILL USE ############################################################
 		''' IMAGES FOR THE START PAGE '''
 		self.bgImg = PhotoImage(file="resources/startPage/homepage.png")
 		self.bgnImg = PhotoImage(file="resources/startPage/beginButton.png")
@@ -41,6 +41,21 @@ class App(Tk):
 		self.tablaImg = PhotoImage(file="resources/tabla/tabla.png")
 		self.tablaButtonImg = PhotoImage(file="resources/tabla/tablaButton.png")
 
+		''' IMAGES FOR PAGE SIX '''
+		self.pasosBgImg = PhotoImage(file="resources/pasos/pasosBG.png")
+		self.pasos1ButtonImg = PhotoImage(file="resources/pasos/paso1Button.png")
+		self.pasos2ButtonImg = PhotoImage(file="resources/pasos/paso2Button.png")
+		self.pasos3ButtonImg = PhotoImage(file="resources/pasos/paso3Button.png")
+		self.pasos4ButtonImg = PhotoImage(file="resources/pasos/paso4Button.png")
+		self.pasos5ButtonImg = PhotoImage(file="resources/pasos/paso5Button.png")
+		self.pasos6ButtonImg = PhotoImage(file="resources/pasos/paso6Button.png")
+		self.paso1Img = PhotoImage(file="resources/pasos/paso1.png")
+		self.paso2Img = PhotoImage(file="resources/pasos/paso2.png")
+		self.paso3Img = PhotoImage(file="resources/pasos/paso3.png")
+		self.paso4Img = PhotoImage(file="resources/pasos/paso4.png")
+		self.paso5Img = PhotoImage(file="resources/pasos/paso5.png")
+		self.paso6Img = PhotoImage(file="resources/pasos/paso6.png")
+
 		##########################################################################################################################
 
 		#Setup Frame
@@ -51,7 +66,7 @@ class App(Tk):
 
 		self.frames = {}
 
-		for F in (StartPage, PageOne, PageTwo,PageThree,PageFour,PageFive,PageSix):
+		for F in (StartPage, PageOne, PageTwo,PageThree,PageFour,PageFive,PageSix,PageSeven):
 			frame = F(container, self)
 			self.frames[F] = frame
 			frame.grid(row=0, column=0, sticky="nsew")
@@ -337,11 +352,175 @@ class PageFive(Frame):
 			self.controller.update()
 			time.sleep(0.001)
 
-
 class PageSix(Frame):
 	def __init__(self, parent, controller):
 		Frame.__init__(self, parent)		
 
+		self.controller = controller
+
+		#helper variables to help with the animations
+		self.currentStep = 1
+
+		#creating the canvas
+		self.canvas = Canvas(self,width=1000,height=600)
+		self.canvas.pack()
+
+		''' placing the images onto the canvas '''
+		pasosBG = self.canvas.create_image(500,300,image = controller.pasosBgImg)
+		paso1Button = self.canvas.create_image(100,130,image = controller.pasos1ButtonImg)
+		paso2Button = self.canvas.create_image(100,205,image = controller.pasos2ButtonImg)
+		paso3Button = self.canvas.create_image(100,280,image = controller.pasos3ButtonImg)
+		paso4Button = self.canvas.create_image(100,355,image = controller.pasos4ButtonImg)
+		paso5Button = self.canvas.create_image(100,355+75,image = controller.pasos5ButtonImg)
+		paso6Button = self.canvas.create_image(100,355+150,image = controller.pasos6ButtonImg)
+
+		casaIcon = self.canvas.create_image(135,50,image= controller.casaImg)
+		flechaIcon = self.canvas.create_image(900,60,image = controller.flechaImg)
+
+		self.paso2 = self.canvas.create_image(1500,350,image = controller.paso2Img)
+		self.paso1 = self.canvas.create_image(600,350,image = controller.paso1Img)
+		self.paso3 = self.canvas.create_image(1500,350,image = controller.paso3Img)
+		self.paso4 = self.canvas.create_image(1500,350,image = controller.paso4Img)
+		self.paso5 = self.canvas.create_image(1500,350,image = controller.paso5Img)
+		self.paso6 = self.canvas.create_image(1500,350,image = controller.paso6Img)
+
+		''' Binding buttons '''
+		self.canvas.tag_bind(paso1Button,"<Button-1>",self.mostrarPaso1)
+		self.canvas.tag_bind(paso2Button,"<Button-1>",self.mostrarPaso2)
+		self.canvas.tag_bind(paso3Button,"<Button-1>",self.mostrarPaso3)
+		self.canvas.tag_bind(paso4Button,"<Button-1>",self.mostrarPaso4)
+		self.canvas.tag_bind(paso5Button,"<Button-1>",self.mostrarPaso5)
+		self.canvas.tag_bind(paso6Button,"<Button-1>",self.mostrarPaso6)
+
+		self.canvas.tag_bind(casaIcon,"<Button-1>",self.changeToStartPage)
+		self.canvas.tag_bind(flechaIcon,"<Button-1>",self.changeToPageSeven)
+
+	def changeToStartPage(self,event):
+		self.controller.show_frame(StartPage)
+
+	def changeToPageSeven(self,event):
+		self.controller.show_frame(PageSeven)
+	
+	def mostrarPaso1(self,event):
+		if(self.currentStep == 1):
+			pass
+		elif(self.currentStep == 2):
+			self.moverHorizontal(self.paso2,1500,"right")
+		elif(self.currentStep == 3):
+			self.moverHorizontal(self.paso3,1500,"right")
+		elif(self.currentStep == 4):
+			self.moverHorizontal(self.paso4,1500,"right")
+		elif(self.currentStep == 5):
+			self.moverHorizontal(self.paso5,1500,"right")
+		elif(self.currentStep == 6):
+			self.moverHorizontal(self.paso6,1500,"right")
+		
+		self.moverHorizontal(self.paso1,600,"left")
+		self.currentStep = 1
+	def mostrarPaso2(self,event):
+		if(self.currentStep == 2):
+			pass
+		elif(self.currentStep == 1):
+			self.moverHorizontal(self.paso1,1500,"right")
+		elif(self.currentStep == 3):
+			self.moverHorizontal(self.paso3,1500,"right")
+		elif(self.currentStep == 4):
+			self.moverHorizontal(self.paso4,1500,"right")
+		elif(self.currentStep == 5):
+			self.moverHorizontal(self.paso5,1500,"right")
+		elif(self.currentStep == 6):
+			self.moverHorizontal(self.paso6,1500,"right")	
+		
+		self.moverHorizontal(self.paso2,600,"left")
+		self.currentStep = 2
+	def mostrarPaso3(self,event):
+		if(self.currentStep == 3):
+			pass
+		elif(self.currentStep == 2):
+			self.moverHorizontal(self.paso2,1500,"right")
+		elif(self.currentStep == 1):
+			self.moverHorizontal(self.paso1,1500,"right")
+		elif(self.currentStep == 4):
+			self.moverHorizontal(self.paso4,1500,"right")
+		elif(self.currentStep == 5):
+			self.moverHorizontal(self.paso5,1500,"right")
+		elif(self.currentStep == 6):
+			self.moverHorizontal(self.paso6,1500,"right")	
+		
+		self.moverHorizontal(self.paso3,600,"left")
+		self.currentStep = 3
+	def mostrarPaso4(self,event):
+		if(self.currentStep == 4):
+			pass
+		elif(self.currentStep == 2):
+			self.moverHorizontal(self.paso2,1500,"right")
+		elif(self.currentStep == 3):
+			self.moverHorizontal(self.paso3,1500,"right")
+		elif(self.currentStep == 1):
+			self.moverHorizontal(self.paso1,1500,"right")
+		elif(self.currentStep == 5):
+			self.moverHorizontal(self.paso5,1500,"right")
+		elif(self.currentStep == 6):
+			self.moverHorizontal(self.paso6,1500,"right")	
+		
+		self.moverHorizontal(self.paso4,600,"left")
+		self.currentStep = 4
+	def mostrarPaso5(self,event):
+		if(self.currentStep == 5):
+			pass
+		elif(self.currentStep == 2):
+			self.moverHorizontal(self.paso2,1500,"right")
+		elif(self.currentStep == 3):
+			self.moverHorizontal(self.paso3,1500,"right")
+		elif(self.currentStep == 4):
+			self.moverHorizontal(self.paso4,1500,"right")
+		elif(self.currentStep == 1):
+			self.moverHorizontal(self.paso1,1500,"right")
+		elif(self.currentStep == 6):
+			self.moverHorizontal(self.paso6,1500,"right")
+		
+		self.moverHorizontal(self.paso5,600,"left")
+		self.currentStep = 5
+	def mostrarPaso6(self,event):
+		if(self.currentStep == 6):
+			pass
+		elif(self.currentStep == 2):
+			self.moverHorizontal(self.paso2,1500,"right")
+		elif(self.currentStep == 3):
+			self.moverHorizontal(self.paso3,1500,"right")
+		elif(self.currentStep == 4):
+			self.moverHorizontal(self.paso4,1500,"right")
+		elif(self.currentStep == 1):
+			self.moverHorizontal(self.paso1,1500,"right")
+		elif(self.currentStep == 5):
+			self.moverHorizontal(self.paso5,1500,"right")
+		
+		self.moverHorizontal(self.paso6,600,"left")
+		self.currentStep = 6
+
+	def moverHorizontal(self,item,posicionFinal,direccion):
+		if(direccion == "left"):
+			xspeed = -10
+			pos = self.canvas.coords(item)
+			while(pos[0] > posicionFinal):
+				self.canvas.move(item,xspeed,0)
+				pos = self.canvas.coords(item)
+				self.controller.update()
+				time.sleep(0.001)
+		else:
+			xspeed = 7
+			pos = self.canvas.coords(item)
+			while(pos[0] < posicionFinal):
+				self.canvas.move(item,xspeed,0)
+				pos = self.canvas.coords(item)
+				self.controller.update()
+				time.sleep(0.001)
+
+class PageSeven(Frame):
+	def __init__(self, parent, controller):
+		Frame.__init__(self, parent)		
+
+		
 
 
 app = App()
