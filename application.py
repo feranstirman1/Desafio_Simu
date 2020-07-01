@@ -56,6 +56,21 @@ class App(Tk):
 		self.paso5Img = PhotoImage(file="resources/pasos/paso5.png")
 		self.paso6Img = PhotoImage(file="resources/pasos/paso6.png")
 
+		''' IMAGES FOR PAGE SEVEN '''
+		self.componentesBgImg = PhotoImage(file = "resources/componentes/componentesBG.png")
+		self.parte1Img = PhotoImage(file = "resources/componentes/parte1.png")
+		self.parte2Img = PhotoImage(file = "resources/componentes/parte2.png")
+		self.parte3Img = PhotoImage(file = "resources/componentes/parte3.png")
+		self.parte4Img = PhotoImage(file = "resources/componentes/parte4.png")
+		self.parte5Img = PhotoImage(file = "resources/componentes/parte5.png")
+		self.parte6Img = PhotoImage(file = "resources/componentes/parte6.png")
+		self.parte1ButtonImg = PhotoImage(file = "resources/componentes/parte1Button.png")
+		self.parte2ButtonImg = PhotoImage(file = "resources/componentes/parte2Button.png")
+		self.parte3ButtonImg = PhotoImage(file = "resources/componentes/parte3Button.png")
+		self.parte4ButtonImg = PhotoImage(file = "resources/componentes/parte4Button.png")
+		self.parte5ButtonImg = PhotoImage(file = "resources/componentes/parte5Button.png")
+		self.parte6ButtonImg = PhotoImage(file = "resources/componentes/parte6Button.png")
+
 		##########################################################################################################################
 
 		#Setup Frame
@@ -66,7 +81,7 @@ class App(Tk):
 
 		self.frames = {}
 
-		for F in (StartPage, PageOne, PageTwo,PageThree,PageFour,PageFive,PageSix,PageSeven):
+		for F in (StartPage, PageOne, PageTwo,PageThree,PageFour,PageFive,PageSix,PageSeven,PageEight):
 			frame = F(container, self)
 			self.frames[F] = frame
 			frame.grid(row=0, column=0, sticky="nsew")
@@ -518,10 +533,180 @@ class PageSix(Frame):
 
 class PageSeven(Frame):
 	def __init__(self, parent, controller):
-		Frame.__init__(self, parent)		
+		Frame.__init__(self, parent)
 
+		self.controller = controller
+
+		#helper variables to help with the animations
+		self.currentStep = 1
+
+		#creating the canvas
+		self.canvas = Canvas(self,width=1000,height=600)
+		self.canvas.pack()
+
+		''' placing the images onto the canvas '''
+		componentesBG = self.canvas.create_image(500,300,image = controller.componentesBgImg)
+
+		parte1Button = self.canvas.create_image(120,75,image = controller.parte1ButtonImg)		
+		parte2Button = self.canvas.create_image(120+150,75,image = controller.parte2ButtonImg)		
+		parte3Button = self.canvas.create_image(120+150+150,75,image = controller.parte3ButtonImg)		
+		parte4Button = self.canvas.create_image(120+150+150+150,75,image = controller.parte4ButtonImg)		
+		parte5Button = self.canvas.create_image(120+150+150+150+150,75,image = controller.parte5ButtonImg)		
+		parte6Button = self.canvas.create_image(120+150+150+150+150+150,75,image = controller.parte6ButtonImg)		
+
+		self.parte1 = self.canvas.create_image(500,350,image = controller.parte1Img)
+		self.parte2 = self.canvas.create_image(500,1000,image = controller.parte2Img)
+		self.parte3 = self.canvas.create_image(500,1000,image = controller.parte3Img)
+		self.parte4 = self.canvas.create_image(500,1000,image = controller.parte4Img)
+		self.parte5 = self.canvas.create_image(500,1000,image = controller.parte5Img)
+		self.parte6 = self.canvas.create_image(500,1000,image = controller.parte6Img)
+
+		casaIcon = self.canvas.create_image(900,400,image= controller.casaImg)
+		flechaIcon = self.canvas.create_image(900,500,image = controller.flechaImg)
+
+		''' Binding buttons '''
+		self.canvas.tag_bind(parte1Button,"<Button-1>",self.mostrarParte1)
+		self.canvas.tag_bind(parte2Button,"<Button-1>",self.mostrarParte2)
+		self.canvas.tag_bind(parte3Button,"<Button-1>",self.mostrarParte3)
+		self.canvas.tag_bind(parte4Button,"<Button-1>",self.mostrarParte4)
+		self.canvas.tag_bind(parte5Button,"<Button-1>",self.mostrarParte5)
+		self.canvas.tag_bind(parte6Button,"<Button-1>",self.mostrarParte6)
+
+		self.canvas.tag_bind(casaIcon,"<Button-1>",self.changeToStartPage)
+		self.canvas.tag_bind(flechaIcon,"<Button-1>",self.changeToPageEight)
+	
+	def changeToStartPage(self,event):
+		self.controller.show_frame(StartPage)
+
+	def changeToPageEight(self,event):
+		self.controller.show_frame(PageEight)
+
+	def moverArriba(self,item,posicionFinal):
+		yspeed=-10
+		pos =  self.canvas.coords(item)
+		while(pos[1] > posicionFinal):
+			self.canvas.move(item,0,yspeed)
+			pos = self.canvas.coords(item)
+			self.controller.update()
+			time.sleep(0.001)
+	def moverAbajo(self,item,posicionFinal):
+		yspeed=10
+		pos =  self.canvas.coords(item)
+		while(pos[1] < posicionFinal):
+			self.canvas.move(item,0,yspeed)
+			pos = self.canvas.coords(item)
+			self.controller.update()
+			time.sleep(0.001)
+
+	def mostrarParte1(self,event):
+		if(self.currentStep == 1):
+			pass
+		elif(self.currentStep == 2):
+			self.moverAbajo(self.parte2,1000)
+		elif(self.currentStep == 3):
+			self.moverAbajo(self.parte3,1000)
+		elif(self.currentStep == 4):
+			self.moverAbajo(self.parte4,1000)
+		elif(self.currentStep == 5):
+			self.moverAbajo(self.parte5,1000)
+		elif(self.currentStep == 6):
+			self.moverAbajo(self.parte6,1000)
 		
+		self.moverArriba(self.parte1,350)
+		self.currentStep = 1
+	def mostrarParte2(self,event):
+		if(self.currentStep == 2):
+			pass
+		elif(self.currentStep == 1):
+			self.moverAbajo(self.parte1,1000)
+		elif(self.currentStep == 3):
+			self.moverAbajo(self.parte3,1000)
+		elif(self.currentStep == 4):
+			self.moverAbajo(self.parte4,1000)
+		elif(self.currentStep == 5):
+			self.moverAbajo(self.parte5,1000)
+		elif(self.currentStep == 6):
+			self.moverAbajo(self.parte6,1000)
+		
+		self.moverArriba(self.parte2,350)
+		self.currentStep = 2
+	def mostrarParte3(self,event):
+		if(self.currentStep == 3):
+			pass
+		elif(self.currentStep == 2):
+			self.moverAbajo(self.parte2,1000)
+		elif(self.currentStep == 1):
+			self.moverAbajo(self.parte1,1000)
+		elif(self.currentStep == 4):
+			self.moverAbajo(self.parte4,1000)
+		elif(self.currentStep == 5):
+			self.moverAbajo(self.parte5,1000)
+		elif(self.currentStep == 6):
+			self.moverAbajo(self.parte6,1000)
+		
+		self.moverArriba(self.parte3,350)
+		self.currentStep = 3
+	def mostrarParte4(self,event):
+		if(self.currentStep == 4):
+			pass
+		elif(self.currentStep == 2):
+			self.moverAbajo(self.parte2,1000)
+		elif(self.currentStep == 3):
+			self.moverAbajo(self.parte3,1000)
+		elif(self.currentStep == 1):
+			self.moverAbajo(self.parte1,1000)
+		elif(self.currentStep == 5):
+			self.moverAbajo(self.parte5,1000)
+		elif(self.currentStep == 6):
+			self.moverAbajo(self.parte6,1000)
+		
+		self.moverArriba(self.parte4,350)
+		self.currentStep = 4
+	def mostrarParte5(self,event):
+		if(self.currentStep == 5):
+			pass
+		elif(self.currentStep == 2):
+			self.moverAbajo(self.parte2,1000)
+		elif(self.currentStep == 3):
+			self.moverAbajo(self.parte3,1000)
+		elif(self.currentStep == 4):
+			self.moverAbajo(self.parte4,1000)
+		elif(self.currentStep == 1):
+			self.moverAbajo(self.parte1,1000)
+		elif(self.currentStep == 6):
+			self.moverAbajo(self.parte6,1000)
+		
+		self.moverArriba(self.parte5,350)
+		self.currentStep = 5
+	def mostrarParte6(self,event):
+		if(self.currentStep == 6):
+			pass
+		elif(self.currentStep == 2):
+			self.moverAbajo(self.parte2,1000)
+		elif(self.currentStep == 3):
+			self.moverAbajo(self.parte3,1000)
+		elif(self.currentStep == 4):
+			self.moverAbajo(self.parte4,1000)
+		elif(self.currentStep == 5):
+			self.moverAbajo(self.parte5,1000)
+		elif(self.currentStep == 1):
+			self.moverAbajo(self.parte1,1000)
+		
+		self.moverArriba(self.parte6,350)
+		self.currentStep = 6
 
+class PageEight(Frame):
+	def __init__(self, parent, controller):
+		Frame.__init__(self, parent)
+
+		self.controller = controller
+
+		#helper variables to help with the animations
+		self.currentStep = 1
+
+		#creating the canvas
+		self.canvas = Canvas(self,width=1000,height=600)
+		self.canvas.pack()
 
 app = App()
 app.title("Desafio MEF en 3D")
