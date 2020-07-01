@@ -71,6 +71,15 @@ class App(Tk):
 		self.parte5ButtonImg = PhotoImage(file = "resources/componentes/parte5Button.png")
 		self.parte6ButtonImg = PhotoImage(file = "resources/componentes/parte6Button.png")
 
+		''' IMAGES FOR PAGE EIGHT '''
+		self.ensamblajeBgImg = PhotoImage(file="resources/ensamblaje/ensamblajeBG.png")
+		self.circuloImg = PhotoImage(file = "resources/ensamblaje/circle.png")
+		self.ensamblajeButtonImg = PhotoImage(file = "resources/ensamblaje/ensamblajeButton.png")
+		self.localMatrixImg = PhotoImage(file="resources/ensamblaje/localMatrix.png")
+		self.globalMatrixImg = PhotoImage(file="resources/ensamblaje/globalMatrix.png")
+		self.individualCellImg = PhotoImage(file="resources/ensamblaje/individualCell.png")
+
+
 		##########################################################################################################################
 
 		#Setup Frame
@@ -81,12 +90,12 @@ class App(Tk):
 
 		self.frames = {}
 
-		for F in (StartPage, PageOne, PageTwo,PageThree,PageFour,PageFive,PageSix,PageSeven,PageEight):
+		for F in (StartPage, PageOne, PageTwo,PageThree,PageFour,PageFive,PageSix,PageSeven,PageEight,PageNine):
 			frame = F(container, self)
 			self.frames[F] = frame
 			frame.grid(row=0, column=0, sticky="nsew")
 
-		self.show_frame(StartPage)	
+		self.show_frame(PageEight)	
 	def show_frame(self, context):
 		frame = self.frames[context]
 		frame.tkraise()
@@ -702,11 +711,111 @@ class PageEight(Frame):
 		self.controller = controller
 
 		#helper variables to help with the animations
-		self.currentStep = 1
+		self.termino = False
 
 		#creating the canvas
 		self.canvas = Canvas(self,width=1000,height=600)
 		self.canvas.pack()
+
+		''' placing the images onto the canvas '''
+		ensamblajeBG = self.canvas.create_image(500,300,image = controller.ensamblajeBgImg)
+		ensamblajeButton = self.canvas.create_image(900,50,image = controller.ensamblajeButtonImg)
+
+		self.localMatrix = self.canvas.create_image(500,1000,image = controller.localMatrixImg) # 500 250 final coords
+		self.globalMatrix = self.canvas.create_image(500,1000,image=controller.globalMatrixImg) # 500 250 final coords
+		self.circleFila = self.canvas.create_image(-500,170,image = controller.circuloImg) # 215 170 final coords
+		self.circleColumna = self.canvas.create_image(1500,150,image = controller.circuloImg) # 290 150 final coords
+		self.individualCell = self.canvas.create_image(290,1000,image = controller.individualCellImg) # 290 175 final coords
+
+		self.casaIcon = self.canvas.create_image(900,1000,image= controller.casaImg) # 900 400
+		self.flechaIcon = self.canvas.create_image(900,1000,image = controller.flechaImg) # 900 500
+
+		
+
+		''' Binding buttons '''
+		self.canvas.tag_bind(ensamblajeButton,"<Button-1>",self.animarEnsamblaje)
+		self.canvas.tag_bind(self.casaIcon,"<Button-1>",self.changeToStartPage)
+		self.canvas.tag_bind(self.flechaIcon,"<Button-1>",self.changeToPageNine)
+
+	def animarEnsamblaje(self,event):
+		if(self.termino == False):
+			self.moverArriba(self.localMatrix,250,2)
+			self.moverArriba(self.individualCell,175,15)
+			time.sleep(0.01)
+			self.moverHorizontal(self.circleColumna,290,"left",1)
+			self.moverHorizontal(self.circleFila,215,"right",1)
+			time.sleep(0.002)
+			self.moverAbajo(self.individualCell,400,1)
+			time.sleep(0.003)
+			self.moverHorizontal(self.circleColumna,1500,"right",3)
+			self.moverHorizontal(self.circleFila,-500,"left",3)
+			time.sleep(0.003)
+			self.moverAbajo(self.localMatrix,1000,1)
+			time.sleep(0.02)
+			self.moverArriba(self.globalMatrix,250,1)
+			time.sleep(0.02)
+			self.moverHorizontal(self.circleColumna,565,"left",1)
+			self.moverArriba(self.circleColumna,100,1)
+			self.moverHorizontal(self.circleFila,180,"right",1)
+			self.moverAbajo(self.circleFila,220,1)
+			self.moverArriba(self.individualCell,225,1)
+			self.moverHorizontal(self.individualCell,540,"right",1)
+			self.canvas.create_text(500,450,fill="darkblue",font="Times 40 bold",text="animacion terminada")
+			self.moverArriba(self.casaIcon,400,1)
+			self.moverArriba(self.flechaIcon,500,1)
+			self.termino = True
+		else:
+			pass
+
+	def changeToStartPage(self,event):
+		self.controller.show_frame(StartPage)
+	def changeToPageNine(self,event):
+		self.controller.show_frame(PageNine)
+	def mover(self,item,x,y):
+		pos = self.canvas.coords(item)
+		xActual = pos[0]
+		yActual = pos[1]
+		destinoX = x - xActual
+		destinoY = y - yActual
+		self.canvas.move(item,destinoX,destinoY)
+		self.controller.update()
+	def moverArriba(self,item,posicionFinal,velocidad):
+		yspeed=-velocidad
+		pos =  self.canvas.coords(item)
+		while(pos[1] > posicionFinal):
+			self.canvas.move(item,0,yspeed)
+			pos = self.canvas.coords(item)
+			self.controller.update()
+			time.sleep(0.001)
+	def moverAbajo(self,item,posicionFinal,velocidad):
+		yspeed=velocidad
+		pos =  self.canvas.coords(item)
+		while(pos[1] < posicionFinal):
+			self.canvas.move(item,0,yspeed)
+			pos = self.canvas.coords(item)
+			self.controller.update()
+			time.sleep(0.001)
+	def moverHorizontal(self,item,posicionFinal,direccion,velocidad):
+		if(direccion == "left"):
+			xspeed = -velocidad
+			pos = self.canvas.coords(item)
+			while(pos[0] > posicionFinal):
+				self.canvas.move(item,xspeed,0)
+				pos = self.canvas.coords(item)
+				self.controller.update()
+				time.sleep(0.001)
+		else:
+			xspeed = velocidad
+			pos = self.canvas.coords(item)
+			while(pos[0] < posicionFinal):
+				self.canvas.move(item,xspeed,0)
+				pos = self.canvas.coords(item)
+				self.controller.update()
+				time.sleep(0.001)
+
+class PageNine(Frame):
+	def __init__(self, parent, controller):
+		Frame.__init__(self, parent)
 
 app = App()
 app.title("Desafio MEF en 3D")
