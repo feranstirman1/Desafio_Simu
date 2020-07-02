@@ -79,6 +79,16 @@ class App(Tk):
 		self.globalMatrixImg = PhotoImage(file="resources/ensamblaje/globalMatrix.png")
 		self.individualCellImg = PhotoImage(file="resources/ensamblaje/individualCell.png")
 
+		''' IMAGES FOR PAGE NINE '''
+		self.contornoBgImg = PhotoImage(file="resources/contorno/contornoBG.png")
+		self.contorno1Img = PhotoImage(file="resources/contorno/paso1.png")
+		self.contorno2Img = PhotoImage(file="resources/contorno/paso2.png")
+		self.contorno3Img = PhotoImage(file="resources/contorno/paso3.png")
+		self.contornoButtonImg = PhotoImage(file="resources/contorno/siguienteButton.png")
+
+		''' IMAGES FOR FINAL PAGE '''
+		self.finalBgImg = PhotoImage(file="resources/final/finalBG.png")
+		self.finalButtonImg = PhotoImage(file="resources/final/finalButton.png")
 
 		##########################################################################################################################
 
@@ -90,12 +100,12 @@ class App(Tk):
 
 		self.frames = {}
 
-		for F in (StartPage, PageOne, PageTwo,PageThree,PageFour,PageFive,PageSix,PageSeven,PageEight,PageNine):
+		for F in (StartPage, PageOne, PageTwo,PageThree,PageFour,PageFive,PageSix,PageSeven,PageEight,PageNine,FinalPage):
 			frame = F(container, self)
 			self.frames[F] = frame
 			frame.grid(row=0, column=0, sticky="nsew")
 
-		self.show_frame(PageEight)	
+		self.show_frame(StartPage)	
 	def show_frame(self, context):
 		frame = self.frames[context]
 		frame.tkraise()
@@ -816,6 +826,88 @@ class PageEight(Frame):
 class PageNine(Frame):
 	def __init__(self, parent, controller):
 		Frame.__init__(self, parent)
+
+		self.controller = controller
+
+		#helper variables to help with the animations
+		self.paso = 1
+
+		#creating the canvas
+		self.canvas = Canvas(self,width=1000,height=600)
+		self.canvas.pack()
+		
+		''' placing the images onto the canvas '''
+		contornoBG = self.canvas.create_image(500,300,image = controller.contornoBgImg)
+		contornoButton = self.canvas.create_image(900,50,image = controller.contornoButtonImg)
+
+		self.contorno1 = self.canvas.create_image(500,300,image = controller.contorno1Img)
+		self.contorno2 = self.canvas.create_image(-500,300,image = controller.contorno2Img)
+		self.contorno3 = self.canvas.create_image(-500,300,image = controller.contorno3Img)
+
+		self.casaIcon = self.canvas.create_image(70,50,image= controller.casaImg) # 70 50
+
+		''' Binding buttons '''
+		self.canvas.tag_bind(contornoButton,"<Button-1>",self.siguientePaso)
+		self.canvas.tag_bind(self.casaIcon,"<Button-1>",self.changeToFinalPage)
+
+	def changeToStartPage(self,event):
+		self.controller.show_frame(StartPage)
+	def changeToFinalPage(self,event):
+		self.controller.show_frame(FinalPage)
+	def siguientePaso(self,event):
+		if(self.paso==1):
+			self.moverHorizontal(self.contorno1,1500,"right",3)
+			self.moverHorizontal(self.contorno2,500,"right",2)
+			self.paso +=1
+		elif(self.paso==2):
+			self.moverHorizontal(self.contorno2,1500,"right",3)
+			self.moverHorizontal(self.contorno3,500,"right",2)
+			self.paso +=1
+		else:
+			self.changeToFinalPage(event)
+
+	def moverHorizontal(self,item,posicionFinal,direccion,velocidad):
+		if(direccion == "left"):
+			xspeed = -velocidad
+			pos = self.canvas.coords(item)
+			while(pos[0] > posicionFinal):
+				self.canvas.move(item,xspeed,0)
+				pos = self.canvas.coords(item)
+				self.controller.update()
+				time.sleep(0.001)
+		else:
+			xspeed = velocidad
+			pos = self.canvas.coords(item)
+			while(pos[0] < posicionFinal):
+				self.canvas.move(item,xspeed,0)
+				pos = self.canvas.coords(item)
+				self.controller.update()
+				time.sleep(0.001)
+
+class FinalPage(Frame):
+	def __init__(self, parent, controller):
+		Frame.__init__(self, parent)
+
+		self.controller = controller
+
+		#helper variables to help with the animations
+		self.paso = 1
+
+		#creating the canvas
+		self.canvas = Canvas(self,width=1000,height=600)
+		self.canvas.pack()
+		
+		''' placing the images onto the canvas '''
+		finalBG = self.canvas.create_image(500,300,image = controller.finalBgImg)
+		finalButton = self.canvas.create_image(500,350,image = controller.finalButtonImg)
+
+		''' Binding buttons '''
+		self.canvas.tag_bind(finalButton,"<Button-1>",self.cerrarTodo)
+
+	def cerrarTodo(self,event):
+		self.controller.destroy()
+
+
 
 app = App()
 app.title("Desafio MEF en 3D")
